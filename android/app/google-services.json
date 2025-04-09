@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "523185127294",
+    "project_id": "homefinder-4de5e",
+    "storage_bucket": "homefinder-4de5e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:523185127294:android:b7ce9a77f97abd8434fd2f",
+        "android_client_info": {
+          "package_name": "com.example.homefinder"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "523185127294-pvt1ulfmcp6nrogcaukrlm7ijuufqpih.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.homefinder",
+            "certificate_hash": "ad6e9f32c8f194f90f0563a433e5e4f43a21587c"
+          }
+        },
+        {
+          "client_id": "523185127294-0magco6bfq445b1jff2egkr0ea4eui88.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCspw2DnZ17ZzF_xwzaKZo3wZIUl7jwlMY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "523185127294-0magco6bfq445b1jff2egkr0ea4eui88.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "523185127294-ebe2bvus445i7knmpflhfg4fa5u9h4qv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.homefinder"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
