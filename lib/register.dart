@@ -233,38 +233,37 @@ class _RegisterPageState extends State<RegisterPage> {
                     // Sélection du type de compte
                     const SizedBox(height: 15),
                     Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Account Type",
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Expanded(
-                              child: ChoiceChip(
-                                label: const Text('Client'),
-                                selected: _selectedUserType == 'client',
-                                onSelected: (selected) {
-                                  setState(() => _selectedUserType = selected ? 'client' : null);
-                                },
-                              ),
+                            const Text(
+                              "Account Type",
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                              textAlign: TextAlign.center,
                             ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: ChoiceChip(
-                                label: const Text('Standard User'),
-                                selected: _selectedUserType == 'standard',
-                                onSelected: (selected) {
-                                  setState(() => _selectedUserType = selected ? 'standard' : null);
-                                },
-                              ),
+                            const SizedBox(height: 12),
+                            Wrap(
+                              alignment: WrapAlignment.center,
+                              spacing: 12,
+                              children: [
+                                ChoiceChip(
+                                  label: const Text('Client'),
+                                  selected: _selectedUserType == 'client',
+                                  onSelected: (selected) {
+                                    setState(() => _selectedUserType = selected ? 'client' : null);
+                                  },
+                                ),
+                                ChoiceChip(
+                                  label: const Text('Standard User'),
+                                  selected: _selectedUserType == 'standard',
+                                  onSelected: (selected) {
+                                    setState(() => _selectedUserType = selected ? 'standard' : null);
+                                  },
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                      ],
-                    ),
+
 
                     const SizedBox(height: 15),
                     MyButton(
