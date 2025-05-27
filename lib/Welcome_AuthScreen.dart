@@ -4,7 +4,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:homefinder/home_page.dart';
 import 'register.dart'; // ✅ Page d'inscription
 import 'login_page.dart'; // ✅ Page de connexion
-//import 'home_page.dart'; // ✅ Page d'accueil après connexion
 import 'package:shared_preferences/shared_preferences.dart';
 
 

@@ -125,6 +125,7 @@ class AddPropertyScreenState extends State<AddPropertyScreen> {
         'property_type': propertyType,
         'image_url': uploadedImageUrls[0],
         'room_images': uploadedImageUrls,
+        'user_id': Supabase.instance.client.auth.currentUser?.id,
       });
 
       if (mounted) {

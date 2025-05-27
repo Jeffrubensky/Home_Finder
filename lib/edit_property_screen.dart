@@ -157,6 +157,7 @@ class _EditPropertyScreenState extends State<EditPropertyScreen> {
         'property_type': propertyType,
         'image_url': allImageUrls.isNotEmpty ? allImageUrls[0] : '',
         'room_images': allImageUrls,
+        'user_id': Supabase.instance.client.auth.currentUser?.id,
         
       };
 

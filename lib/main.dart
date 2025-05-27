@@ -10,7 +10,8 @@ import 'package:homefinder/welcom_page.dart';
 import 'package:homefinder/login_page.dart';
 import 'package:homefinder/home_page.dart';
 import 'package:homefinder/profile_screen.dart';
-
+import 'package:homefinder/homepage_client.dart';
+ // 🔁 Assure-toi d'avoir cette page
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,18 +50,24 @@ class _MyAppState extends State<MyApp> {
   Future<Widget> _determineStartPage() async {
     final prefs = await SharedPreferences.getInstance();
     final isFirstLaunch = prefs.getBool('firstLaunch') ?? true;
-    final user = FirebaseAuth.instance.currentUser;
+
+    final firebaseUser = FirebaseAuth.instance.currentUser;
+    final supabaseUser = Supabase.instance.client.auth.currentUser;
 
     if (isFirstLaunch) {
       await prefs.setBool('firstLaunch', false);
       return const WelcomePage(); // 🆕 premier lancement
     }
 
-    if (user != null) {
-      return const HomePage(); // 🔐 utilisateur déjà connecté
-    } else {
-      return const LoginPage(); // 👋 accueil pour connexion ou inscription
+    if (supabaseUser != null) {
+      return const HomePage() ; // 👤 utilisateur Supabase
     }
+
+    if (firebaseUser != null) {
+      return const HomePageClient(); // 🔐 utilisateur Firebase
+    }
+
+    return const LoginPage(); // 👋 accueil pour connexion ou inscription
   }
 
   @override
@@ -89,6 +96,7 @@ class _MyAppState extends State<MyApp> {
         '/auth': (context) => const LoginPage(),
         '/login': (context) => const LoginPage(),
         '/home': (context) => const HomePage(),
+        '/homeclient': (context) => const HomePageClient(),
         '/profile': (context) => ProfileScreen(),
       },
     );

@@ -1,16 +1,77 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-class ProfileScreen extends StatelessWidget {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
 
-   ProfileScreen({super.key});
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final SupabaseClient _supabase = Supabase.instance.client;
+
+  String? _email;
+  bool _isSupabaseUser = false;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserInfo();
+  }
+
+  Future<void> _loadUserInfo() async {
+    try {
+      final firebaseUser = _firebaseAuth.currentUser;
+      final supabaseUser = _supabase.auth.currentUser;
+
+      if (supabaseUser != null) {
+        _isSupabaseUser = true;
+        final userId = supabaseUser.id;
+
+        // 🔎 Requête sur la table Supabase (par exemple 'users')
+        final response = await _supabase
+            .from('users')
+            .select('email')
+            .eq('id', userId)
+            .single();
+
+        setState(() {
+          _email = response['email'];
+          _isLoading = false;
+        });
+      } else if (firebaseUser != null) {
+        setState(() {
+          _email = firebaseUser.email;
+          _isLoading = false;
+        });
+      } else {
+        setState(() {
+          _email = null;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Erreur de chargement utilisateur: $e');
+      setState(() {
+        _email = null;
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final User? user = _auth.currentUser;
-    final String email = user?.email ?? 'No email';
-    final String firstLetter = email.isNotEmpty ? email[0].toUpperCase() : '?';
+    final String firstLetter = (_email?.isNotEmpty ?? false) ? _email![0].toUpperCase() : '?';
+
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -23,42 +84,36 @@ class ProfileScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            /// ✅ Icône de profil (avatar avec initiale si pas de photo)
             CircleAvatar(
               radius: 50,
-              backgroundColor: Colors.blue, // Couleur de fond de l’avatar
-              backgroundImage: user?.photoURL != null
-                  ? NetworkImage(user!.photoURL!)
-                  : null, // Utilisation de l’image Firebase si disponible
-              child: user?.photoURL == null
-                  ? Text(
-                      firstLetter,
-                      style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Colors.white),
-                    )
-                  : null, // Affichage de l'initiale si pas d’image
+              backgroundColor: Colors.blue,
+              child: Text(
+                firstLetter,
+                style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Colors.white),
+              ),
             ),
-            SizedBox(height: 10),
-
-            /// ✅ Affichage de l'email de l'utilisateur
+            const SizedBox(height: 10),
             Text(
-              email,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              _email ?? 'No email found',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 20),
-
-            /// ✅ Bouton de déconnexion
+            const SizedBox(height: 20),
             ElevatedButton.icon(
               onPressed: () async {
-                await _auth.signOut();
+                if (_isSupabaseUser) {
+                  await _supabase.auth.signOut();
+                } else {
+                  await _firebaseAuth.signOut();
+                }
                 if (context.mounted) {
                   Navigator.pushReplacementNamed(context, '/login');
                 }
               },
-              icon: Icon(Icons.logout),
-              label: Text("Logout"),
+              icon: const Icon(Icons.logout),
+              label: const Text("Logout"),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               ),
             ),
           ],
