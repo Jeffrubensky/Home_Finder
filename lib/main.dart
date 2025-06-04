@@ -11,8 +11,7 @@ import 'package:homefinder/login_page.dart';
 import 'package:homefinder/home_page.dart';
 import 'package:homefinder/profile_screen.dart';
 import 'package:homefinder/homepage_client.dart';
- // 🔁 Assure-toi d'avoir cette page
-
+ 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
