@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class ProfileScreen extends StatelessWidget {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth;
 
-   ProfileScreen({super.key});
+  ProfileScreen({Key? key}) 
+    : _auth = FirebaseAuth.instance,
+      super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,46 +25,147 @@ class ProfileScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            /// ✅ Icône de profil (avatar avec initiale si pas de photo)
+            // Icône de profil
             CircleAvatar(
               radius: 50,
-              backgroundColor: Colors.blue, // Couleur de fond de l’avatar
+              backgroundColor: Colors.blue,
               backgroundImage: user?.photoURL != null
                   ? NetworkImage(user!.photoURL!)
-                  : null, // Utilisation de l’image Firebase si disponible
+                  : null,
               child: user?.photoURL == null
                   ? Text(
                       firstLetter,
-                      style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Colors.white),
+                      style: const TextStyle(
+                        fontSize: 40, 
+                        fontWeight: FontWeight.bold, 
+                        color: Colors.white
+                      ),
                     )
-                  : null, // Affichage de l'initiale si pas d’image
+                  : null,
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
 
-            /// ✅ Affichage de l'email de l'utilisateur
+            // Email de l'utilisateur
             Text(
               email,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
-            /// ✅ Bouton de déconnexion
-            ElevatedButton.icon(
-              onPressed: () async {
-                await _auth.signOut();
-                if (context.mounted) {
-                  Navigator.pushReplacementNamed(context, '/login');
-                }
-              },
-              icon: Icon(Icons.logout),
-              label: Text("Logout"),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            // Section About
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40),
+              child: ElevatedButton(
+                onPressed: () => _showAboutDialog(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 250, 250, 250),
+                  minimumSize: const Size(double.infinity, 50),
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.info_outline),
+                    SizedBox(width: 10),
+                    Text('About App'),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+
+            // Section Privacy Policy
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40),
+              child: ElevatedButton(
+                onPressed: () => _showPrivacyPolicy(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+                  minimumSize: const Size(double.infinity, 50),
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.privacy_tip_outlined),
+                    SizedBox(width: 10),
+                    Text('Privacy Policy'),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+
+            // Bouton de déconnexion
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40),
+              child: ElevatedButton(
+                onPressed: () async {
+                  await _auth.signOut();
+                  if (context.mounted) {
+                    Navigator.pushReplacementNamed(context, '/login');
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  minimumSize: const Size(double.infinity, 50),
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.logout),
+                    SizedBox(width: 10),
+                    Text('Logout'),
+                  ],
+                ),
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showAboutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('About App'),
+        content: const Text(
+            'This is a real estate application developed to help users find and list properties.\n\n'
+            'Version 1.0.0\n\n'
+            '© 2023 RealEstate Inc.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showPrivacyPolicy(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Privacy Policy'),
+        content: SingleChildScrollView(
+          child: const Text(
+            'PRIVACY POLICY\n\n'
+            '1. Information Collection\n'
+            'We collect information you provide when using our app...\n\n'
+            '2. Use of Information\n'
+            'Your information is used to provide and improve our services...\n\n'
+            '3. Data Security\n'
+            'We implement security measures to protect your data...\n\n'
+            'Last Updated: January 2023',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
+          ),
+        ],
       ),
     );
   }
