@@ -7,6 +7,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'home_page.dart';
 import 'homepage_client.dart';
+import 'user_session.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -49,6 +50,8 @@ class _LoginPageState extends State<LoginPage> {
     if (userData != null) {
       // Utilisateur trouvé dans Supabase
       final userType = userData['user_type'] as String? ?? 'standard';
+      UserSession.email = userData['email'];
+      UserSession.userType = userType;
       
       if (mounted) {
         Navigator.pop(context);

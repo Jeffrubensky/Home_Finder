@@ -1,18 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'user_session.dart';
 
 class ProfileScreen extends StatelessWidget {
   final FirebaseAuth _auth;
 
-  ProfileScreen({Key? key}) 
-    : _auth = FirebaseAuth.instance,
-      super(key: key);
+  ProfileScreen({Key? key})
+      : _auth = FirebaseAuth.instance,
+        super(key: key);
+
+  /// Récupère l’email depuis Firebase ou UserSession
+  String getUserEmail() {
+    return UserSession.email ?? _auth.currentUser?.email ?? 'No email';
+  }
+
+  /// Récupère la première lettre de l’email
+  String getProfileInitial(String email) {
+    return email.isNotEmpty ? email[0].toUpperCase() : '?';
+  }
 
   @override
   Widget build(BuildContext context) {
     final User? user = _auth.currentUser;
-    final String email = user?.email ?? 'No email';
-    final String firstLetter = email.isNotEmpty ? email[0].toUpperCase() : '?';
+    final String email = getUserEmail();
+    final String firstLetter = getProfileInitial(email);
 
     return Scaffold(
       appBar: AppBar(
@@ -36,23 +47,23 @@ class ProfileScreen extends StatelessWidget {
                   ? Text(
                       firstLetter,
                       style: const TextStyle(
-                        fontSize: 40, 
-                        fontWeight: FontWeight.bold, 
-                        color: Colors.white
+                        fontSize: 40,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
                     )
                   : null,
             ),
             const SizedBox(height: 10),
 
-            // Email de l'utilisateur
+            // Email affiché
             Text(
               email,
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
 
-            // Section About
+            // About App
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: ElevatedButton(
@@ -73,7 +84,7 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 10),
 
-            // Section Privacy Policy
+            // Privacy Policy
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: ElevatedButton(
@@ -94,12 +105,14 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 10),
 
-            // Bouton de déconnexion
+            // Logout
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: ElevatedButton(
                 onPressed: () async {
                   await _auth.signOut();
+                  UserSession.email = null;
+                  UserSession.userType = null;
                   if (context.mounted) {
                     Navigator.pushReplacementNamed(context, '/login');
                   }
@@ -130,9 +143,10 @@ class ProfileScreen extends StatelessWidget {
       builder: (context) => AlertDialog(
         title: const Text('About App'),
         content: const Text(
-            'This is a real estate application developed to help users find and list properties.\n\n'
-            'Version 1.0.0\n\n'
-            '© 2023 RealEstate Inc.'),
+          'This is a real estate application developed to help users find and list properties.\n\n'
+          'Version 1.0.0\n\n'
+          '© 2023 RealEstate Inc.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
